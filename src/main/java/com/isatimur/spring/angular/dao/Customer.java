@@ -1,18 +1,20 @@
 package com.isatimur.spring.angular.dao;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.security.acl.Group;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by tisachenko on 15.10.15.
  */
 @Entity
-public class CustomUser implements Serializable,UserDetails {
+public class Customer implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
 
@@ -20,24 +22,20 @@ public class CustomUser implements Serializable,UserDetails {
     @GeneratedValue
     private Integer id;
 
-    private String login;
+    private String username;
 
     private String password;
 
     private boolean enabled;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoggedIn;
-
-    private List<Group> groups = new ArrayList();
-
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLES",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
-    private CustomRole role;
-
     public Integer getId() {
         return id;
     }
@@ -46,24 +44,12 @@ public class CustomUser implements Serializable,UserDetails {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        ArrayList grantedAuthorities = new ArrayList();
-        Iterator i = this.groups.iterator();
-
-        while(i.hasNext()){
-            CustomGroup group = (CustomGroup) i.next();
-            grantedAuthorities.add(group.asGrantedAuthority());
-        }
-        return null;
+        SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_USER");
+        ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(grantedAuthority);
+        return authorities;
     }
 
     public String getPassword() {
@@ -72,7 +58,11 @@ public class CustomUser implements Serializable,UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -99,11 +89,17 @@ public class CustomUser implements Serializable,UserDetails {
         this.password = password;
     }
 
-    public CustomRole getRole() {
-        return role;
+    public Date getLastLoggedIn() {
+        return lastLoggedIn;
     }
 
-    public void setRole(CustomRole role) {
-        this.role = role;
+    public void setLastLoggedIn(Date lastLoggedIn) {
+        this.lastLoggedIn = lastLoggedIn;
     }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+
 }

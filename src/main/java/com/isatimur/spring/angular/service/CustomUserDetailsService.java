@@ -19,11 +19,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 //    private static final StrictLogger LOGGER;
 
     @Autowired
-    UserServiceDao userServiceDao;
+    UserServiceDao userService;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userServiceDao.findUserByName(username);
+        return userService.findUserByName(username);
     }
 }

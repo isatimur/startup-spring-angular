@@ -16,6 +16,7 @@ import java.util.Map;
  */
 @Controller
 public class IndexController {
+
     // Match everything without a suffix (so not a public resource)
     @RequestMapping(value = "/{[path:[^\\.]*}")
     public String redirect() {
